@@ -56,8 +56,8 @@ public class HttpServer {
             out.println(getHTML());
         }else if(request.startsWith("/setkv")){
             if (request.split("=").length == 3){
-                    out.println(setKV(request));
-                }
+                out.println(setKV(request));
+            }
             else{
                 out.println(messageError("Key o Value no puede ser vacio"));
             }
@@ -69,6 +69,9 @@ public class HttpServer {
                 out.println(messageError("Key no puede ser vacio"));
             }
 
+        }
+        else{
+            out.println(messageError("Recurso no encontrado"));
         }
     }
     public static String getHTML(){
@@ -142,12 +145,12 @@ public class HttpServer {
             if (valorantiguo == null) {
                 System.out.println("nuevo");
                 return "HTTP/1.1 200 OK\r\n"
-                            + "Content-Type: application/json\r\n"
-                            + "\r\n" + "{ \"key\": \"" + valor + "\", \"value\": \"" + valor2 + "\", \"status\": \"" + "creado" + "\"}";
+                        + "Content-Type: application/json\r\n"
+                        + "\r\n" + "{ \"key\": \"" + valor + "\", \"value\": \"" + valor2 + "\", \"status\": \"" + "creado" + "\"}";
             } else {
                 return "HTTP/1.1 200 OK\r\n"
-                            + "Content-Type: application/json\r\n"
-                            + "\r\n" + "{ \"key\": \"" + valor + "\", \"value\": \"" + valor2 + "\", \"status\": \"" + "remplazado" + "\"}";
+                        + "Content-Type: application/json\r\n"
+                        + "\r\n" + "{ \"key\": \"" + valor + "\", \"value\": \"" + valor2 + "\", \"status\": \"" + "remplazado" + "\"}";
             }
 
         }catch(Exception e){
