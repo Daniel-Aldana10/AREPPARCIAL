@@ -1,9 +1,7 @@
 package org.example;
 
-import javax.print.DocFlavor;
 import java.net.*;
 import java.io.*;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class HttpServer {
@@ -60,9 +58,15 @@ public class HttpServer {
             if (request.split("=").length == 3){
                     out.println(setKV(request));
                 }
+            else{
+                out.println(messageError("Key o Value no puede ser vacio"));
+            }
         }else if(request.startsWith("/getkv")){
             if(request.split("=").length == 2){
                 out.println(getKv(request));
+            }
+            else{
+                out.println(messageError("Key no puede ser vacio"));
             }
 
         }
@@ -133,24 +137,25 @@ public class HttpServer {
             String valor2 = peticion.split("=")[2];
             System.out.println(valor2);
             String valorantiguo = values.get(valor);
+
             values.put(valor, valor2);
-            if(valorantiguo== null){
+            if (valorantiguo == null) {
                 System.out.println("nuevo");
-                return  "HTTP/1.1 200 OK\r\n"
-                        + "Content-Type: application/json\r\n"
-                        + "\r\n" + "{ \"key\": \"" + valor + "\", \"value\": \"" + valor2 + "\", \"status\": \"" + "creado" +"\"}" ;
-            }else{
                 return "HTTP/1.1 200 OK\r\n"
-                        + "Content-Type: application/json\r\n"
-                        + "\r\n" + "{ \"key\": \"" + valor + "\", \"value\": \"" + valor2 + "\", \"status\": \"" + "remplazado" +"\"}" ;
+                            + "Content-Type: application/json\r\n"
+                            + "\r\n" + "{ \"key\": \"" + valor + "\", \"value\": \"" + valor2 + "\", \"status\": \"" + "creado" + "\"}";
+            } else {
+                return "HTTP/1.1 200 OK\r\n"
+                            + "Content-Type: application/json\r\n"
+                            + "\r\n" + "{ \"key\": \"" + valor + "\", \"value\": \"" + valor2 + "\", \"status\": \"" + "remplazado" + "\"}";
             }
+
         }catch(Exception e){
-            System.out.println(e.getMessage());
+            return "HTTP/1.1 400 Not Found\r\n"
+                    + "Content-Type: application/json\r\n"
+                    + "\r\n" + "{ \"status\": \"" + e.getMessage() +"\"}" ;
         }
 
-        //System.out.println(Arrays.toString(peticion));
-        //peticion.split("=")[1].split("\\{")[0].split("}")[0]
-        return "Arrays.toString(peticion);";
     }
     public static String getKv(String peticion){
         try{
@@ -160,7 +165,7 @@ public class HttpServer {
             if(valorantiguo== null){
                 System.out.println("no se encontro");
                 String error = "key_not_found";
-                return "HTTP/1.1 400 Not Found\r\n"
+                return "HTTP/1.1 404 Not Found\r\n"
                         + "Content-Type: application/json\r\n"
                         + "\r\n"+ "{ \"error\": \"" + error + "\", \"value\": \"" + valor + "\"}";
 
@@ -170,12 +175,14 @@ public class HttpServer {
                         + "\r\n"+"{ \"key\": \"" + valor + "\", \"value\": \"" + valorantiguo + "\"}";
             }
         }catch(Exception e){
-            System.out.println(e.getMessage());
+            return "HTTP/1.1 400 Not Found\r\n"
+                    + "Content-Type: application/json\r\n"
+                    + "\r\n" + "{ \"status\": \"" + e.getMessage() +"\"}" ;
         }
-        //String hola = "{ \"key\": \"" + valor + "\"}";
-        // String hola = "{ \"key\": \"mi_llave\", \"value\": \"mi_valor\" }";
-        //System.out.println(Arrays.toString(peticion));
-        //peticion.split("=")[1].split("\\{")[0].split("}")[0]
-        return "Arrays.toString(peticion);";
+    }
+    public static String messageError(String value){
+        return "HTTP/1.1 400 Bad Request\r\n"
+                + "Content-Type: application/json\r\n"
+                + "\r\n"+"{ \"error\": \"" + "400" + "\", \"message\": \"" + value + "\"}";
     }
 }
